@@ -1,4 +1,4 @@
-package org.twocows.yellowdog.kaggle;
+package org.twocows.yellowdog.kafka;
 
 import java.util.Arrays;
 import java.util.Properties;
@@ -78,6 +78,7 @@ public class SimpleKafkaConsumer<K, V> {
 	 * @return A count of the consumer records.
 	 */
 	public long consume() {
+		System.out.println(properties);
 		/*
 		 * Simple sanity count.
 		 */

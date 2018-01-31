@@ -23,19 +23,39 @@ public class KaggleLine {
 	
 	public static final int TRADE_USD_INDEX = 5;
 
+	/**
+	 * The group this belongs to.
+	 */
+	private String group;
+	
+	/**
+	 * Unique id per group.
+	 */
 	private long id;
 	
+	/**
+	 * The data.
+	 */
 	private String[] line;
 
 	public KaggleLine() {
 	}
 	
-	public KaggleLine(long id, String[] line) {
+	public KaggleLine(String group, long id, String[] line) {
 		super();
+		this.group = group;
 		this.id = id;
 		this.line = line;
 	}
 	
+	public String getGroup() {
+		return group;
+	}
+
+	public void setGroup(String group) {
+		this.group = group;
+	}
+
 	public long getId() {
 		return id;
 	}
@@ -56,6 +76,7 @@ public class KaggleLine {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
+		result = prime * result + ((group == null) ? 0 : group.hashCode());
 		result = prime * result + (int) (id ^ (id >>> 32));
 		result = prime * result + Arrays.hashCode(line);
 		return result;
@@ -70,6 +91,11 @@ public class KaggleLine {
 		if (getClass() != obj.getClass())
 			return false;
 		KaggleLine other = (KaggleLine) obj;
+		if (group == null) {
+			if (other.group != null)
+				return false;
+		} else if (!group.equals(other.group))
+			return false;
 		if (id != other.id)
 			return false;
 		if (!Arrays.equals(line, other.line))

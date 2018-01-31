@@ -5,6 +5,8 @@ import org.apache.kafka.common.serialization.LongSerializer;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
+import org.twocows.yellowdog.kafka.KafkaFactory;
+import org.twocows.yellowdog.kafka.SimpleKafkaProducer;
 
 public class TestKaggleLineProducer {
 	
@@ -20,7 +22,8 @@ public class TestKaggleLineProducer {
 	 */
 	
 	@Test
-	public void producer() {
+	public void test() {
+		System.out.println("KaggleLineProducer");
 		final KaggleLineProducer kaggleLineProducer = new KaggleLineProducer();
 		kaggleLineProducer
 			.setProperties(
@@ -30,7 +33,8 @@ public class TestKaggleLineProducer {
 					false
 				)
 			);
-//		kaggleLineProducer.getProperties().setProperty(KaggleLineProducer.MAX_COUNT, "10");
+		kaggleLineProducer.getProperties().setProperty(KaggleLineProducer.MAX_COUNT, "10");
 		System.out.println(kaggleLineProducer.produce());
+		System.out.println(kaggleLineProducer);
 	}
 }

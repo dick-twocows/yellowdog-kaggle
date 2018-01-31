@@ -1,4 +1,4 @@
-package org.twocows.yellowdog.kaggle;
+package org.twocows.yellowdog.kafka;
 import java.util.Map;
 
 import org.apache.kafka.common.errors.SerializationException;

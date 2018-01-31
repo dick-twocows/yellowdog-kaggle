@@ -1,4 +1,4 @@
-package org.twocows.yellowdog.kaggle;
+package org.twocows.yellowdog.kafka;
 
 import java.util.Iterator;
 import java.util.Properties;
@@ -76,7 +76,7 @@ public abstract class SimpleKafkaProducer<K, V> {
 		if (producerRecord == null) {
 			return null;
 		}
-		return producer.send(producerRecord).get(2, TimeUnit.SECONDS);
+		return producer.send(producerRecord).get(5, TimeUnit.SECONDS);
 	}
 	
 	/**
@@ -85,6 +85,7 @@ public abstract class SimpleKafkaProducer<K, V> {
 	 * @return A count.
 	 */
     public long produce() {
+    	System.out.println(properties);
 		/*
 		 * Let the JVM close the Kafka Producer.
 		 */

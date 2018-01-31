@@ -1,6 +1,7 @@
 package org.twocows.yellowdog.kaggle;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.twocows.yellowdog.kafka.SimpleKafkaConsumer;
 
 /**
  * Override handle method and output Kafka ConsumerRecords to System.out.

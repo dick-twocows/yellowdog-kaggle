@@ -8,9 +8,11 @@ import java.net.URL;
 import java.util.Iterator;
 import java.util.Objects;
 import java.util.Properties;
+import java.util.UUID;
 import java.util.zip.GZIPInputStream;
 
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.twocows.yellowdog.kafka.SimpleKafkaProducer;
 
 import com.opencsv.CSVReader;
 
@@ -31,10 +33,6 @@ public class KaggleLineProducer extends SimpleKafkaProducer<Long, KaggleLine> {
 	public static final String CSV_READER_SPEC = "kaggle.csvreader.spec";
 	
 	public static final String CSV_READER_GZIP = "kaggle.csvreader.gzip";
-
-	public static KaggleLine START = new KaggleLine(0, new String[0]);
-
-	public static KaggleLine END = new KaggleLine(-1, new String[0]);
 	
 	public static Properties append(final Properties properties, final String spec, final Boolean gzip) {
 		properties.setProperty(CSV_READER_SPEC, spec);
@@ -45,6 +43,8 @@ public class KaggleLineProducer extends SimpleKafkaProducer<Long, KaggleLine> {
 	private CSVReader csvReader = null;
 
 	private String[] headers = null;
+	
+	private String group = UUID.randomUUID().toString();
 	
     public KaggleLineProducer() {
 		super();
@@ -76,7 +76,7 @@ public class KaggleLineProducer extends SimpleKafkaProducer<Long, KaggleLine> {
 		} catch (IOException e) {
 			throw new KaggleException(e);
 		}
-		return new ProducerRecord<Long, KaggleLine>(TOPIC_DEFAULT, 0L, START);
+		return new ProducerRecord<Long, KaggleLine>(TOPIC_DEFAULT, 0L, new KaggleLine(group, 0, new String[0]));
 	}
 
 	@Override
@@ -88,7 +88,7 @@ public class KaggleLineProducer extends SimpleKafkaProducer<Long, KaggleLine> {
 				System.err.println(e);
 			}
 		}
-		return new ProducerRecord<Long, KaggleLine>(TOPIC_DEFAULT, -1L, END);
+		return new ProducerRecord<Long, KaggleLine>(TOPIC_DEFAULT, -1L, new KaggleLine(group, -1, new String[0]));
 	}
 
 	@Override
@@ -114,10 +114,17 @@ public class KaggleLineProducer extends SimpleKafkaProducer<Long, KaggleLine> {
 			@Override
 			public ProducerRecord<Long, KaggleLine> next() {
 				id++;
-				final ProducerRecord<Long, KaggleLine> producerRecord = new ProducerRecord<Long, KaggleLine>(TOPIC_DEFAULT, id, new KaggleLine(id, line));
+				final ProducerRecord<Long, KaggleLine> producerRecord = new ProducerRecord<Long, KaggleLine>(TOPIC_DEFAULT, id, new KaggleLine(group, id, line));
 				line = null;
 				return producerRecord;
 			}
 		};
 	}
+
+	@Override
+	public String toString() {
+		return group + " " + count;
+	}
+	
+	
 }
