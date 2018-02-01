@@ -10,6 +10,8 @@ import java.util.Objects;
 import java.util.Properties;
 import java.util.UUID;
 import java.util.zip.GZIPInputStream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.twocows.yellowdog.kafka.SimpleKafkaProducer;
@@ -39,6 +41,8 @@ public class KaggleLineProducer extends SimpleKafkaProducer<Long, KaggleLine> {
 		properties.setProperty(CSV_READER_GZIP, gzip.toString());
 		return properties;
 	}
+
+	private ZipFile zipFile;
 	
 	private CSVReader csvReader = null;
 
@@ -56,12 +60,19 @@ public class KaggleLineProducer extends SimpleKafkaProducer<Long, KaggleLine> {
      * @throws IOException
      */
 	protected CSVReader createCSVReader() throws IOException {
-		Objects.requireNonNull(properties.getProperty(CSV_READER_SPEC));
-		Objects.requireNonNull(properties.getProperty(CSV_READER_GZIP));
-		
-    	URL url = new URL(properties.getProperty(CSV_READER_SPEC));
-    	InputStream is = url.openStream();
-    	InputStreamReader isr = new InputStreamReader(Boolean.valueOf(properties.getProperty(CSV_READER_GZIP)) ? new GZIPInputStream(is) : is);
+		final String spec = Objects.requireNonNull(properties.getProperty(CSV_READER_SPEC));
+		final boolean zip = Boolean.valueOf(properties.getProperty(CSV_READER_GZIP, Boolean.FALSE.toString()));
+
+		InputStream is;
+		if (zip) {
+			zipFile = new ZipFile(spec);
+			final ZipEntry zipEntry = zipFile.getEntry(spec.substring(spec.lastIndexOf("/") + 1, spec.lastIndexOf(".")));
+			is = zipFile.getInputStream(zipEntry);
+		} else {
+			URL url = new URL(properties.getProperty(CSV_READER_SPEC));
+			is = url.openStream();
+		}
+    	InputStreamReader isr = new InputStreamReader(is);
 		BufferedReader br = new BufferedReader(isr);
 		final CSVReader csvReader = new CSVReader(br);
 		// TODO Properties check for headers.
@@ -84,6 +95,13 @@ public class KaggleLineProducer extends SimpleKafkaProducer<Long, KaggleLine> {
 		if (csvReader != null) {
 			try {
 				csvReader.close();
+			} catch (IOException e) {
+				System.err.println(e);
+			}
+		}
+		if (zipFile != null) {
+			try {
+				zipFile.close();
 			} catch (IOException e) {
 				System.err.println(e);
 			}
