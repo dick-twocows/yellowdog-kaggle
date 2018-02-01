@@ -36,6 +36,8 @@ public class KaggleLineProducer extends SimpleKafkaProducer<Long, KaggleLine> {
 	
 	public static final String CSV_READER_GZIP = "kaggle.csvreader.gzip";
 	
+	public static final String CSV_READER_MAX_COUNT = "kaggle.csvreader.max.count";
+	
 	public static Properties append(final Properties properties, final String spec, final Boolean gzip) {
 		properties.setProperty(CSV_READER_SPEC, spec);
 		properties.setProperty(CSV_READER_GZIP, gzip.toString());

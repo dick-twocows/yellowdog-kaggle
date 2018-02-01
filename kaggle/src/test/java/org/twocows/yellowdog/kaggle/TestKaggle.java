@@ -17,7 +17,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class TestKaggle {
 
 	/*
-	 * Inject using -Dkaggle.csvreader.spec=
+	 * Inject using 
+	 * -Dkaggle.csvreader.spec=
+	 * -Dkaggle.csvreader.gzip=
+	 * -Dkaggle.csvreader.max.count=
 	 */
 //	public static final String KAGGLE_URL = System.getProperty(KaggleLineProducer.CSV_READER_SPEC);
 	
@@ -38,6 +41,7 @@ public class TestKaggle {
 				
 				final String spec = Objects.requireNonNull(System.getProperty(KaggleLineProducer.CSV_READER_SPEC));
 				final boolean zip = Boolean.valueOf(System.getProperty(KaggleLineProducer.CSV_READER_GZIP, Boolean.FALSE.toString()));
+				final String maxCount = System.getProperty(KaggleLineProducer.CSV_READER_MAX_COUNT, String.valueOf(Long.MAX_VALUE));
 				
 				final KaggleLineProducer kaggleLineProducer = new KaggleLineProducer();
 				kaggleLineProducer
@@ -48,7 +52,7 @@ public class TestKaggle {
 							zip
 						)
 					);
-				kaggleLineProducer.getProperties().setProperty(KaggleLineProducer.MAX_COUNT, MAX_COUNT);
+				kaggleLineProducer.getProperties().setProperty(KaggleLineProducer.MAX_COUNT, maxCount);
 				System.out.println(kaggleLineProducer.produce());
 				System.out.println(kaggleLineProducer);
 				
